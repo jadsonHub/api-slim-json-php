@@ -10,10 +10,11 @@ use app\model\User;
 use Slim\Factory\AppFactory;
 
 session_start();
+//teste
 $_SESSION['logged'] = true;
 $app = AppFactory::create();
 
-// Parse json, form data and xml
+
 $app->addBodyParsingMiddleware();
 
 $app->addRoutingMiddleware();

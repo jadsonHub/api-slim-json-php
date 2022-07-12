@@ -5,7 +5,7 @@ namespace app\model;
 use app\database\Connection;
 use Exception;
 
-use function PHPSTORM_META\type;
+
 
 class User
 {
