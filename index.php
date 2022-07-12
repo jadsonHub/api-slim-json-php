@@ -93,5 +93,5 @@ try {
     $app->run();
 } catch (\Exception $e) {
 
-    echo   json_encode(["fail" => "FORAM ENCONTRADOS ERROS!", "error" => $e->getMessage()]);
+    echo   json_encode(["fail" => "FORAM ENCONTRADOS ERROS!", "type_error" => $e->getMessage()]);
 }
