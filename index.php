@@ -9,9 +9,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use app\model\User;
 use Slim\Factory\AppFactory;
 
-session_start();
-//teste
-$_SESSION['logged'] = true;
 $app = AppFactory::create();
 
 
@@ -27,66 +24,62 @@ try {
         return $response->withHeader('Content-type', 'application/json');
     });
 
-
     // lista de usuarios casdastrados
     $app->get('/api/dev/list/user', function (Request $request, Response $response, $args) {
-        if ($_SESSION['logged']) {
-            $userModel = new User();
-            $response->getBody()->write(json_encode($userModel->list()));
-        } else {
-            throw new Exception('Não autorizado');
-        }
+
+        $userModel = new User();
+        $response->getBody()->write(json_encode($userModel->list()));
+
         return $response->withHeader('Content-type', 'application/json');
     });
 
     //realizar login  do user
     $app->post('/api/dev/login', function (Request $request, Response $response, $args) {
-        if (!($_SESSION['logged'])) {
-            $userModel = new User();
-            if ($userModel->login($request->getParsedBody())) {
-                $response->getBody()->write(json_encode(["success" => "logged"]));
-            } else {
-                $response->getBody()->write(json_encode(["fail" => "error ao logar"]));
-            }
+
+        $userModel = new User();
+        if ($userModel->login($request->getParsedBody())) {
+            $response->getBody()->write(json_encode(["success" => "logged"]));
         } else {
-            throw new Exception('Não autorizado');
+            $response->getBody()->write(json_encode(["fail" => "error ao logar"]));
         }
         return $response->withHeader('Content-type', 'application/json');
     });
 
     //detalhes do user 
     $app->get('/api/dev/datalhes/user/{id}', function (Request $request, Response $response, $args) {
-        if ($_SESSION['logged']) {
-            $userModel = new User();
-            $id = intval($args['id']);
-            $_SESSION['detalhes'] = $id;
-            $response->getBody()->write(json_encode($userModel->detalhes($id)));
-        } else {
-            throw new Exception('Não autorizado');
-        }
+
+        $userModel = new User();
+        $id = intval($args['id']);
+        $response->getBody()->write(json_encode($userModel->detalhes($id)));
+
         return $response->withHeader('Content-type', 'application/json');
     });
 
     //atualizar user
-    $app->put('/api/dev/atualizar/user', function (Request $request, Response $response, $args) {
-        if ($_SESSION['logged'] && $_SESSION['detalhes']) {
-            $userModel = new User();
-            $id = $_SESSION['detalhes'];
-            $response->getBody()->write(json_encode($userModel->update($id)));
-        } else {
-            throw new Exception('Não autorizado');
-        }
+    $app->put('/api/dev/atualizar/user/{id}', function (Request $request, Response $response, $args) {
+
+        $userModel = new User();
+        $id = intval($args['id']);
+        $response->getBody()->write(json_encode($userModel->update($id)));
+
+        return $response->withHeader('Content-type', 'application/json');
+    });
+
+    //deletar user
+    $app->put('/api/dev/deletar/user/{id}', function (Request $request, Response $response, $args) {
+
+        $userModel = new User();
+        $id = intval($args['id']);
+        $response->getBody()->write(json_encode($userModel->delete($id)));
+
         return $response->withHeader('Content-type', 'application/json');
     });
 
     // criar user 
     $app->post('/api/dev/create/user', function (Request $request, Response $response, $args) {
-        if (!$_SESSION['logged']) {
-            $userModel = new User();
-            $response->getBody()->write(json_encode($userModel->create($request->getParsedBody())));
-        } else {
-            throw new Exception('Não autorizado');
-        }
+
+        $userModel = new User();
+        $response->getBody()->write(json_encode($userModel->create($request->getParsedBody())));
         return $response->withHeader('Content-type', 'application/json');
     });
 
