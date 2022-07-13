@@ -26,7 +26,17 @@ try {
     $app->get('/api/dev/list/user', function (Request $request, Response $response, $args) {
 
         $userModel = new User();
-        $response->getBody()->write(json_encode($userModel->list()));
+       
+        $response->getBody()->write(json_encode($userModel->list($request->getParsedBody() ?? [])));
+
+        return $response->withHeader('Content-type', 'application/json');
+    });
+
+    //login
+    $app->post('/api/dev/login/user', function (Request $request, Response $response, $args) {
+
+        $userModel = new User();
+        $response->getBody()->write(json_encode($userModel->login($request->getParsedBody() ?? [])));
 
         return $response->withHeader('Content-type', 'application/json');
     });
@@ -46,7 +56,7 @@ try {
     $app->put('/api/dev/atualizar/user/{id}', function (Request $request, Response $response, $args) {
         $userModel = new User();
         $id = intval($args['id']);
-        $response->getBody()->write(json_encode($userModel->update($id,$request->getParsedBody())));
+        $response->getBody()->write(json_encode($userModel->update($id,$request->getParsedBody() ?? [])));
         return $response->withHeader('Content-type', 'application/json');
     });
 
@@ -61,7 +71,7 @@ try {
     // criar user 
     $app->post('/api/dev/create/user', function (Request $request, Response $response, $args) {
         $userModel = new User();
-        $response->getBody()->write(json_encode($userModel->create($request->getParsedBody())));
+        $response->getBody()->write(json_encode($userModel->create($request->getParsedBody() ?? [])));
         return $response->withHeader('Content-type', 'application/json');
     });
     $app->run();
