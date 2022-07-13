@@ -21,16 +21,27 @@ class User
     public function create(array $dados = [])
     {
 
-
         try {
 
-            extract($dados);
-            $senha = md5($password_user);
+            $auxSenha = md5($dados['password_user']);
+            $dados['password_user'] = $auxSenha;
+            $keyArr = array_keys($dados);
+            $insert = 'insert into user ';
+            $colum = '(';
+            $values = 'values(';
+            $sql = '';
+            
+            foreach($keyArr as $indice => $value){
+                   $colum .= $value.',';
+            };
+            foreach($dados as $indice => $value){
+                     $values.="'".$value. "'".',';
+            }
+            $sql.= $insert.rtrim($colum,',').')'.rtrim($values,',').');';
+           
             $conexao = $this->conexao->Connection();
             $conexao->beginTransaction();
-            $conexao->exec("insert into user( name_user,email_user,password_user)
-            values('{$name_user}','{$email_user}','{$senha}');");
-
+            $conexao->exec($sql);
             if ($conexao->commit()) {
                 return ['success' => "usuario cadastrado com sucesso!"];
             } else {
@@ -71,18 +82,24 @@ class User
 
             $busca = $this->detalhes($id);
             if (!isset($busca['fail'])) {
-                extract($dados);
-                $data =  date('Y-m-d');
+
+                $auxSenha = md5($dados['password_user']);
+                $data = date('Y-m-d');
                 $hora = date('H:i:s');
-                $senha = md5($password_user);
+                $dados['password_user'] = $auxSenha;
+                $keyArr = array_keys($dados);
+                $update = "update user set date_create = '{$data}', hora_create = '{$hora}',";
+                $colum = '';
+                $sql = '';
+
+                foreach($keyArr as $indice => $value){
+                    $colum.=($value."='{$dados[$value]}',");
+                };
+                $sql = $update.rtrim($colum,','). " where id_user = {$id}";
+                
                 $conexao = $this->conexao->Connection();
                 $conexao->beginTransaction();
-                $conexao->exec("update user set name_user = '{$name_user}',
-                            email_user ='{$email_user}',
-                            password_user ='{$senha}',
-                            date_create =  '{$data}',
-                            hora_create = '{$hora}'
-                            where id_user = {$id}");
+                $conexao->exec($sql);
 
                 if ($conexao->commit()) {
                     return ['success' => "usuario atualizado com sucesso!"];
