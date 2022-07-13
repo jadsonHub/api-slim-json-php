@@ -9,7 +9,6 @@ use Slim\Factory\AppFactory;
 
 $app = AppFactory::create();
 
-
 $app->addBodyParsingMiddleware();
 
 $app->addRoutingMiddleware();
@@ -74,8 +73,8 @@ try {
         $response->getBody()->write(json_encode($userModel->create($request->getParsedBody() ?? [])));
         return $response->withHeader('Content-type', 'application/json');
     });
+    
     $app->run();
 } catch (\Exception $e) {
-
     echo   json_encode(["fail" => "FORAM ENCONTRADOS ERROS!", "type_error" => $e->getMessage()]);
 }

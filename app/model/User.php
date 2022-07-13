@@ -268,4 +268,9 @@ class User
             return ['fail' => 'não podemos atender a requisição ', "type_error" => $e->getMessage()];
         }
     }
+
+    //em dev
+    public function loggout($tokenPass,$id){
+
+    }
 }
